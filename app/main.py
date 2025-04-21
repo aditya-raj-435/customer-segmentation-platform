@@ -2,16 +2,18 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from typing import Dict, Optional, List, Any
 import json
 import logging
+import aiofiles
 
 from app.models.segmentation import CustomerSegmentation
 from app.models.schemas import CustomerData, SegmentResponse
@@ -39,22 +41,37 @@ app.add_middleware(
 DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
 
-# Mount static files
+# Mount static files and templates
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
 
 # Initialize the segmentation model
 segmentation = CustomerSegmentation()
 
 @app.get("/")
-async def root():
-    return FileResponse("app/static/index.html")
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "version": "1.0.0"}
 
 @app.post("/upload-data/")
 async def upload_data(file: UploadFile):
     try:
         logger.info(f"Receiving file upload: {file.filename}")
-        # Read CSV file
-        df = pd.read_csv(file.file)
+        
+        # Create data directory if it doesn't exist
+        DATA_DIR.mkdir(exist_ok=True)
+        file_path = DATA_DIR / "customer_data.csv"
+        
+        # Save uploaded file
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            content = await file.read()
+            await out_file.write(content)
+        
+        # Read and validate CSV
+        df = pd.read_csv(file_path)
         logger.info(f"Successfully read CSV with shape: {df.shape}")
         
         # Verify required columns
@@ -66,10 +83,6 @@ async def upload_data(file: UploadFile):
         missing_columns = [col for col in required_columns if col not in df.columns]
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
-        
-        # Save the file
-        df.to_csv(DATA_DIR / "customer_data.csv", index=False)
-        logger.info("File saved successfully")
         
         return {"message": "File uploaded successfully", "shape": df.shape}
     except Exception as e:
