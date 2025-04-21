@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.0.0/build/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Customer Segmentation System</h1>
+            <p>Upload customer data or enter individual customer information for segmentation analysis</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="upload">Bulk Upload</div>
+            <div class="tab" data-tab="individual">Individual Entry</div>
+            <div class="tab" data-tab="results">Results</div>
+            <div class="tab" data-tab="analytics">Analytics</div>
+        </div>
+
+        <div class="tab-content active" id="upload">
+            <div class="card">
+                <h2>Upload Customer Data</h2>
+                <div class="file-upload" id="dropZone">
+                    <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                    <p>Drag and drop your CSV file here or click to browse</p>
+                    <button class="btn btn-outline">Choose File</button>
+                </div>
+                <div class="alert alert-success" style="display: none;" id="uploadSuccess">
+                    File uploaded successfully!
+                </div>
+                <div class="alert alert-error" style="display: none;" id="uploadError">
+                    Error uploading file. Please try again.
+                </div>
+                <button class="btn btn-primary" id="processButton" style="display: none;">
+                    Process Data
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="individual">
+            <div class="card">
+                <h2>Enter Customer Information</h2>
+                <form id="customerForm">
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-control" required>
+                            <option value="">Select gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Annual Income</label>
+                        <input type="number" id="income" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchaseFrequency">Purchase Frequency (per year)</label>
+                        <input type="number" id="purchaseFrequency" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastPurchase">Days Since Last Purchase</label>
+                        <input type="number" id="lastPurchase" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avgTimeSpent">Average Time Spent (minutes)</label>
+                        <input type="number" id="avgTimeSpent" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredCategory">Preferred Category</label>
+                        <select id="preferredCategory" class="form-control" required>
+                            <option value="">Select category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Home">Home & Garden</option>
+                            <option value="Books">Books</option>
+                            <option value="Food">Food & Beverage</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Predict Segment</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="tab-content" id="results">
+            <div class="card">
+                <h2>Segmentation Results</h2>
+                <div class="spinner"></div>
+                <div id="segmentResults"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="analytics">
+            <div class="card">
+                <h2>Data Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-item">
+                        <h3>Segment Distribution</h3>
+                        <canvas id="segmentPieChart"></canvas>
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Age Distribution by Segment</h3>
+                        <canvas id="ageBarChart"></canvas>
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Income Distribution</h3>
+                        <canvas id="incomeBoxPlot"></canvas>
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Purchase Patterns</h3>
+                        <canvas id="purchaseScatterPlot"></canvas>
+                    </div>
+                </div>
+                <div class="model-info card">
+                    <h3>Model Performance</h3>
+                    <div id="modelMetrics" class="metrics-grid"></div>
+                </div>
+                <div class="segment-transitions card">
+                    <h3>Segment Transitions</h3>
+                    <div class="table-container">
+                        <table id="transitionMatrix"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,67 @@
+<div class="file-upload" id="dropZone">
+    <input type="file" id="fileInput" accept=".csv" style="display: none;">
+    <i class="fas fa-cloud-upload-alt fa-3x" style="color: var(--primary-color);"></i>
+    <p>Drag and drop your CSV file here or click to browse</p>
+    <button class="btn btn-primary">Choose File</button>
+</div>
+
+<div id="results" style="display: none;">
+    <div class="analytics-grid">
+        <div class="analytics-item">
+            <h3>Segment Distribution</h3>
+            <canvas id="segmentChart"></canvas>
+        </div>
+        <div class="analytics-item">
+            <h3>Key Metrics Overview</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalCustomers">0</div>
+                    <div class="metric-label">Total Customers</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgRecency">0</div>
+                    <div class="metric-label">Avg. Recency (days)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgFrequency">0</div>
+                    <div class="metric-label">Avg. Frequency</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgMonetary">$0</div>
+                    <div class="metric-label">Avg. Monetary Value</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="model-info">
+        <h2>Segmentation Results</h2>
+        <div id="segmentDetails">
+            <!-- Segment cards will be dynamically added here -->
+        </div>
+    </div>
+</div>
+
+<template id="segmentCardTemplate">
+    <div class="segment-card">
+        <div class="segment-title"></div>
+        <div class="segment-stats">
+            <div class="stat-item">
+                <div class="stat-label">Customers</div>
+                <div class="stat-value customers"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Avg. Recency</div>
+                <div class="stat-value recency"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Avg. Frequency</div>
+                <div class="stat-value frequency"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Avg. Monetary</div>
+                <div class="stat-value monetary"></div>
+            </div>
+        </div>
+    </div>
+</template> 
